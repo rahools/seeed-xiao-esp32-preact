@@ -13,6 +13,7 @@
     "dev:hardware": "pnpm run upload-data && pnpm run upload-main-and-monitor"
   },
   "dependencies": {
+    "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "@tailwindcss/vite": "^4.1.13",
     "class-variance-authority": "^0.7.1",

@@ -11,8 +11,29 @@
 
 #include <ESPAsyncWebServer.h>
 #include <LittleFS.h>
+#include <AsyncJson.h>
+#include <ArduinoJson.h>
 
 static AsyncWebServer server(80);
+
+// WiFi status variables
+bool wifiConfigured = false;
+bool wifiConnected = false;
+String currentSSID = "";
+
+// Function to check WiFi status
+void updateWiFiStatus() {
+  wifiConnected = WiFi.status() == WL_CONNECTED;
+  if (wifiConnected) {
+    currentSSID = WiFi.SSID();
+    wifiConfigured = true;
+  } else {
+    currentSSID = "";
+    // For now, assume WiFi is not configured if not connected
+    // This can be enhanced later to check stored credentials
+    wifiConfigured = false;
+  }
+}
 
 // Debug function to list all files in LittleFS
 void listDir(fs::FS &fs, const char *dirname, uint8_t levels) {
@@ -72,6 +93,21 @@ void setup()
   // curl -v http://192.168.4.1/
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->redirect("/index.html"); });
+
+  // curl -v http://192.168.4.1/config
+  server.on("/config", HTTP_GET, [](AsyncWebServerRequest *request) {
+    updateWiFiStatus();
+
+    AsyncJsonResponse *response = new AsyncJsonResponse();
+    JsonObject root = response->getRoot().to<JsonObject>();
+    root["wifiConfigured"] = wifiConfigured;
+    root["wifiConnected"] = wifiConnected;
+    if (wifiConnected && currentSSID.length() > 0) {
+      root["currentSSID"] = currentSSID;
+    }
+    response->setLength();
+    request->send(response);
+  });
 
   // curl -v http://192.168.4.1/
   server.serveStatic("/index.html", LittleFS, "/index.html");
