@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'preact/hooks'
+import { useQuery } from '@tanstack/react-query'
 
 export interface WiFiConfig {
   wifiConfigured: boolean
@@ -7,34 +7,27 @@ export interface WiFiConfig {
 }
 
 export function useWiFiConfig() {
-  const [config, setConfig] = useState<WiFiConfig>({
-    wifiConfigured: false,
-    wifiConnected: false,
-    currentSSID: undefined
-  })
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  const fetchConfig = async () => {
-    try {
-      setLoading(true)
-      setError(null)
+  const { data, isLoading, error, refetch } = useQuery<WiFiConfig>({
+    queryKey: ['wifi-config'],
+    queryFn: async () => {
       const response = await fetch('/config')
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
-      const data = await response.json()
-      setConfig(data)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch WiFi config')
-    } finally {
-      setLoading(false)
+      return response.json()
     }
+  })
+
+  const config = data || {
+    wifiConfigured: false,
+    wifiConnected: false,
+    currentSSID: undefined
   }
 
-  useEffect(() => {
-    fetchConfig()
-  }, [])
-
-  return { config, loading, error, refetch: fetchConfig }
+  return { 
+    config, 
+    loading: isLoading, 
+    error: error instanceof Error ? error.message : error ? 'Failed to fetch WiFi config' : null, 
+    refetch 
+  }
 }
