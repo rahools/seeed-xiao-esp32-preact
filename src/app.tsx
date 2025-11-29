@@ -2,6 +2,7 @@ import { useState } from "preact/hooks";
 import viteLogo from "/vite.svg";
 import preactLogo from "./assets/preact.svg";
 import { CaptivePortal } from "./components/captive-portal/CaptivePortal";
+import { WiFiConnected } from "./components/captive-portal/WiFiConnected";
 import { Button } from "./components/ui/button";
 import { useWiFiConfig } from "./hooks/useWiFiConfig";
 import "./app.css";
@@ -34,9 +35,19 @@ export function App() {
         );
     }
 
-    // Show captive portal when WiFi is not connected
+    // Show captive portal when WiFi is not connected or explicitly requested
     if (!config.wifiConnected || showCaptivePortal) {
         return <CaptivePortal />;
+    }
+
+    // Show connected screen when WiFi is connected
+    if (config.wifiConnected && config.currentSSID) {
+        return (
+            <WiFiConnected
+                ssid={config.currentSSID}
+                onDisconnect={() => setShowCaptivePortal(true)}
+            />
+        );
     }
 
     return (
@@ -63,59 +74,6 @@ export function App() {
             </div>
 
             <h1>ESP32 WiFi Manager</h1>
-
-            {/* WiFi Status Display */}
-            <div class="card">
-                <h2>WiFi Status</h2>
-                <div class="space-y-2">
-                    <div class="flex items-center gap-2">
-                        <span class="font-medium">WiFi Configured:</span>
-                        <span
-                            class={
-                                config.wifiConfigured
-                                    ? "text-green-600"
-                                    : "text-red-600"
-                            }
-                        >
-                            {config.wifiConfigured ? "Yes" : "No"}
-                        </span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="font-medium">WiFi Connected:</span>
-                        <span
-                            class={
-                                config.wifiConnected
-                                    ? "text-green-600"
-                                    : "text-red-600"
-                            }
-                        >
-                            {config.wifiConnected ? "Yes" : "No"}
-                        </span>
-                    </div>
-                    {config.currentSSID && (
-                        <div class="flex items-center gap-2">
-                            <span class="font-medium">Current SSID:</span>
-                            <span>{config.currentSSID}</span>
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            {/* Connected State UI */}
-            <div class="card">
-                <div>
-                    <h3>WiFi Connected Successfully</h3>
-                    <p>Device is connected to {config.currentSSID}</p>
-                    <div class="flex gap-2 mt-2">
-                        <Button
-                            variant="outline"
-                            onClick={() => setShowCaptivePortal(true)}
-                        >
-                            Change Network
-                        </Button>
-                    </div>
-                </div>
-            </div>
 
             {/* Original demo content */}
             <div class="card">

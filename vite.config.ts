@@ -20,7 +20,7 @@ const mockNetworks = [
 
 const mockConfig = {
     wifiConfigured: true,
-    wifiConnected: false,
+    wifiConnected: true,
     currentSSID: "TestNetwork",
 };
 

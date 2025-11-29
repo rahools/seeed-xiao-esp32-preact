@@ -27,6 +27,7 @@ export function CaptivePortal() {
         window.location.reload();
     };
 
+    // Show reboot countdown after successful connection
     if (showRebootCountdown) {
         return (
             <div className="min-h-svh bg-gradient-to-br from-blue-50 to-indigo-100 p-4 flex items-center justify-center">
@@ -35,6 +36,7 @@ export function CaptivePortal() {
         );
     }
 
+    // Show main captive portal interface
     return (
         <div className="min-h-svh bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
             <div className="max-w-2xl mx-auto">
