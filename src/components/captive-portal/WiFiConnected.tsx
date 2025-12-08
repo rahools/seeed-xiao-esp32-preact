@@ -1,7 +1,8 @@
-import { CheckCircle, Wifi, ExternalLink } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { CheckCircle, ExternalLink, Wifi } from "lucide-react";
+import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Badge } from "../ui/badge";
 
 interface WiFiConnectedProps {
     ssid?: string;
@@ -9,9 +10,7 @@ interface WiFiConnectedProps {
 }
 
 export function WiFiConnected({ ssid, onDisconnect }: WiFiConnectedProps) {
-    const handleOpenNewTab = () => {
-        window.open("/", "_blank");
-    };
+    const navigate = useNavigate();
 
     return (
         <div className="min-h-svh bg-gradient-to-br from-green-50 to-emerald-100 p-4">
@@ -44,7 +43,10 @@ export function WiFiConnected({ ssid, onDisconnect }: WiFiConnectedProps) {
                             </span>
                             <div className="flex items-center gap-2">
                                 <span className="font-medium">{ssid}</span>
-                                <Badge variant="outline" className="border-green-400 text-green-700 bg-green-50">
+                                <Badge
+                                    variant="outline"
+                                    className="border-green-400 text-green-700 bg-green-50"
+                                >
                                     Connected
                                 </Badge>
                             </div>
@@ -63,32 +65,25 @@ export function WiFiConnected({ ssid, onDisconnect }: WiFiConnectedProps) {
                 </Card>
 
                 {/* Action Cards */}
-                <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto">
-                    <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={handleOpenNewTab}>
-                        <CardContent className="p-6 text-center">
-                            <ExternalLink className="w-8 h-8 mx-auto mb-2 text-blue-600" />
-                            <h3 className="font-semibold mb-1">Open Web App</h3>
-                            <p className="text-sm text-gray-600">
-                                Access the main application interface
-                            </p>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => window.location.reload()}>
-                        <CardContent className="p-6 text-center">
+                <Card className="cursor-pointer hover:shadow-md transition-shadow max-w-md mx-auto">
+                    <CardContent className="p-6 text-center">
+                        <Link to="/wifi-settings" className="block">
                             <Wifi className="w-8 h-8 mx-auto mb-2 text-purple-600" />
-                            <h3 className="font-semibold mb-1">Network Settings</h3>
+                            <h3 className="font-semibold mb-1">
+                                Network Settings
+                            </h3>
                             <p className="text-sm text-gray-600">
                                 View or modify WiFi configuration
                             </p>
-                        </CardContent>
-                    </Card>
-                </div>
+                        </Link>
+                    </CardContent>
+                </Card>
 
                 {/* Additional Options */}
                 <div className="text-center space-y-3">
                     <p className="text-sm text-gray-500">
-                        You can now access this device from any device on the same network
+                        You can now access this device from any device on the
+                        same network
                     </p>
 
                     {onDisconnect && (

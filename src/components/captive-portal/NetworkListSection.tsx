@@ -13,13 +13,11 @@ import { ScanningSpinner } from "./ScanningSpinner";
 interface NetworkListSectionProps {
     networks: WiFiNetwork[];
     previousNetwork: WiFiNetwork | null | undefined;
-    onConnectionSuccess?: () => void;
 }
 
 export function NetworkListSection({
     networks,
     previousNetwork,
-    onConnectionSuccess,
 }: NetworkListSectionProps) {
     const { config } = useWiFiConfig();
     const { scanning, error, rescan } = useWiFiScan(config.currentSSID);
@@ -74,7 +72,6 @@ export function NetworkListSection({
                                     previousNetwork?.ssid === network.ssid
                                 }
                                 onToggleExpand={handleToggleExpand}
-                                onConnectionSuccess={onConnectionSuccess}
                             />
                         ))}
                     </div>

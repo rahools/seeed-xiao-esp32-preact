@@ -9,7 +9,6 @@ interface NetworkItemProps {
     isExpanded: boolean;
     isPreviousNetwork: boolean;
     onToggleExpand: (network: WiFiNetwork) => void;
-    onConnectionSuccess?: () => void;
 }
 
 export function NetworkItem({
@@ -17,7 +16,6 @@ export function NetworkItem({
     isExpanded,
     isPreviousNetwork,
     onToggleExpand,
-    onConnectionSuccess,
 }: NetworkItemProps) {
     return (
         <>
@@ -77,7 +75,6 @@ export function NetworkItem({
                     <NetworkPasswordForm
                         network={network}
                         onCancel={() => onToggleExpand(network)}
-                        onConnectionSuccess={onConnectionSuccess}
                     />
                 )}
             </div>

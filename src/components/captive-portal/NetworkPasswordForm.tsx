@@ -24,13 +24,11 @@ const formSchema = z.object({
 interface NetworkPasswordFormProps {
 	network: WiFiNetwork;
 	onCancel: () => void;
-	onConnectionSuccess?: () => void;
 }
 
 export function NetworkPasswordForm({
 	network,
 	onCancel,
-	onConnectionSuccess,
 }: NetworkPasswordFormProps) {
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -39,7 +37,7 @@ export function NetworkPasswordForm({
 	const [showPassword, setShowPassword] = useState(false);
 	const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
-	const { connectAsync, isConnecting, isSuccess } = useWifiConnect();
+	const { connectAsync, isConnecting } = useWifiConnect();
 	const onConnect = async (values: z.infer<typeof formSchema>) => {
 		console.log(
 			"Connecting to network:",
@@ -48,7 +46,6 @@ export function NetworkPasswordForm({
 			values.password,
 		);
 		await connectAsync({ ssid: network.ssid, password: values.password });
-		onConnectionSuccess?.();
 	};
 
 	return (

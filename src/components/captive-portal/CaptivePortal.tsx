@@ -1,13 +1,18 @@
 import { useState } from "preact/hooks";
 import { useWiFiConfig } from "../../hooks/useWiFiConfig";
 import { useWiFiScan } from "../../hooks/useWiFiScan";
+import { useWifiConnect } from "../../hooks/useWifiConnect";
 
 import { CaptivePortalHeader } from "./CaptivePortalHeader";
 import { NetworkListSection } from "./NetworkListSection";
 import { PreviousNetworkWarning } from "./PreviousNetworkWarning";
 import { RebootCountdown } from "./RebootCountdown";
 
-export function CaptivePortal() {
+interface CaptivePortalProps {
+    onConnectionSuccess?: () => void;
+}
+
+export function CaptivePortal({ onConnectionSuccess }: CaptivePortalProps) {
     const [showRebootCountdown, setShowRebootCountdown] = useState(false);
     const { config } = useWiFiConfig();
     const { networks } = useWiFiScan(
@@ -19,13 +24,19 @@ export function CaptivePortal() {
         ? networks.find((net) => net.ssid === config.currentSSID)
         : null;
 
-    const handleConnectionSuccess = () => {
-        setShowRebootCountdown(true);
-    };
-
     const handleCountdownComplete = () => {
         window.location.reload();
     };
+
+    // Watch for connection success and show countdown
+    const { isSuccess } = useWifiConnect();
+
+    if (isSuccess && !showRebootCountdown) {
+        setShowRebootCountdown(true);
+        setTimeout(() => {
+            onConnectionSuccess?.();
+        }, 100);
+    }
 
     // Show reboot countdown after successful connection
     if (showRebootCountdown) {
@@ -50,7 +61,6 @@ export function CaptivePortal() {
                 <NetworkListSection
                     networks={networks}
                     previousNetwork={previousNetwork}
-                    onConnectionSuccess={handleConnectionSuccess}
                 />
             </div>
         </div>

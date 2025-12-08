@@ -1,5 +1,6 @@
 import preact from "@preact/preset-vite";
 import tailwindcss from "@tailwindcss/vite";
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import type { IncomingMessage, ServerResponse } from "http";
 import path from "path";
 import { defineConfig, type ViteDevServer } from "vite";
@@ -76,6 +77,10 @@ const apiMockPlugin = () => ({
 // https://vite.dev/config/
 export default defineConfig({
     plugins: [
+        tanstackRouter({
+            target: "react",
+            autoCodeSplitting: true,
+        }),
         preact(),
         tailwindcss(),
         viteSingleFile(),
