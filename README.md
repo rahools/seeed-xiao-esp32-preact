@@ -1,6 +1,15 @@
 # ESP32 Vite WebApp
 
-A modern, lightweight web UI template for ESP32 projects that combines contemporary web technologies with embedded development. This project creates a WiFi captive portal with a responsive, professional interface using Vite, Preact, TailwindCSS v4, and Shadcn UI.
+## 📸 Screenshots
+
+**Welcome Page** - Main landing page for the ESP32 captive portal
+![Welcome Page](.github/readme-images/welcome-page.png)
+
+**WiFi Configuration** - Network selection and connection interface
+![WiFi Configuration](.github/readme-images/wifi-config-page.png)
+
+**Connected Status** - Display showing successful WiFi connection
+![Connected Status](.github/readme-images/wifi-connected-page.png)
 
 ## ✨ Features
 
