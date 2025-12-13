@@ -24,6 +24,7 @@ dist-ssr
 .idea
 .DS_Store
 *.suo
+
 *.ntvs*
 *.njsproj
 *.sln
@@ -35,3 +36,6 @@ data
 # goal md
 goal.md
 goals
+
+# gen-ed routes
+routeTree.gen.ts
