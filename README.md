@@ -1,15 +1,6 @@
 # ESP32 Vite WebApp
 
-## 📸 Screenshots
-
-**Welcome Page** - Main landing page for the ESP32 captive portal
-![Welcome Page](.github/readme-images/welcome-page.png)
-
-**WiFi Configuration** - Network selection and connection interface
-![WiFi Configuration](.github/readme-images/wifi-config-page.png)
-
-**Connected Status** - Display showing successful WiFi connection
-![Connected Status](.github/readme-images/wifi-connected-page.png)
+A modern, lightweight web UI template for ESP32 projects that combines contemporary web technologies with embedded development. This project creates a WiFi captive portal with a responsive, professional interface using Vite, Preact, TailwindCSS v4, and Shadcn UI.
 
 ## ✨ Features
 
@@ -23,9 +14,21 @@
 - 🛠️ **Code Quality**: Automated formatting with Biome and clang-format
 - 📦 **Easy Deployment**: PlatformIO-based ESP32 development workflow
 
+## 📸 Screenshots
+
+**Welcome Page** - Main landing page for the ESP32 captive portal
+![Welcome Page](.github/readme-images/welcome-page.png)
+
+**WiFi Configuration** - Network selection and connection interface
+![WiFi Configuration](.github/readme-images/wifi-config-page.png)
+
+**Connected Status** - Display showing successful WiFi connection
+![Connected Status](.github/readme-images/wifi-connected-page.png)
+
 ## 🏗️ Technology Stack
 
 ### Frontend
+
 - **Preact** - Lightweight React alternative (10KB)
 - **Vite** - Modern build tool and development server
 - **TailwindCSS v4** - Utility-first CSS framework
@@ -35,6 +38,7 @@
 - **TypeScript** - Type-safe JavaScript
 
 ### ESP32/Embedded
+
 - **PlatformIO** - Professional embedded development platform
 - **Arduino Framework** - ESP32 Arduino core
 - **ESPAsyncWebServer** - Asynchronous web server
@@ -81,6 +85,7 @@ esp32-vite-webapp/
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Node.js (v18+) and pnpm
 - PlatformIO IDE or CLI
 - ESP32 development board (tested with Seeed XIAO ESP32-C6)
@@ -88,14 +93,17 @@ esp32-vite-webapp/
 ### Development
 
 1. **Install dependencies**
+
    ```bash
    pnpm install
    ```
 
 2. **Start development server**
+
    ```bash
    pnpm run dev
    ```
+
    This starts the Vite dev server with mock API endpoints.
 
 3. **Build for production**
@@ -106,11 +114,13 @@ esp32-vite-webapp/
 ### ESP32 Deployment
 
 1. **Upload web app to ESP32**
+
    ```bash
    pnpm run upload-data
    ```
 
 2. **Upload ESP32 firmware**
+
    ```bash
    pnpm run upload-main
    ```
@@ -123,6 +133,7 @@ esp32-vite-webapp/
 ## 📱 Application Flow
 
 ### Web Application
+
 - **Entry Point**: `main.tsx` → `App.tsx`
 - **Routing**: File-based routing with TanStack Router
 - **Pages**:
@@ -132,6 +143,7 @@ esp32-vite-webapp/
 - **UI Components**: Shadcn UI with TailwindCSS styling
 
 ### ESP32 Application
+
 - **Entry Point**: `main.cpp`
 - **WiFi Management**: `WiFiUtils` class handles scanning and connections
 - **Web Server**: AsyncWebServer serves the web app and API endpoints
