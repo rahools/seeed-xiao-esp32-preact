@@ -1,29 +1,31 @@
-import { AlertTriangle } from "lucide-react";
+import { useWifiConfig } from "@hooks/use-wifi-config";
+import type { WifiNetwork } from "@hooks/use-wifi-scan";
+import { useWifiScan } from "@hooks/use-wifi-scan";
+import { Alert, AlertDescription } from "@ui/alert";
+import { Button } from "@ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
+import { AlertTriangle, Wifi } from "lucide-react";
 import { useState } from "react";
-import { useWiFiConfig } from "../../hooks/useWiFiConfig";
-import type { WiFiNetwork } from "../../hooks/useWiFiScan";
-import { useWiFiScan } from "../../hooks/useWiFiScan";
-import { Alert, AlertDescription } from "../ui/alert";
-import { Button } from "../ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { EmptyState } from "./EmptyState";
-import { NetworkItem } from "./NetworkItem";
-import { ScanningSpinner } from "./ScanningSpinner";
+import { WifiItem } from "./wifi-item";
 
-interface NetworkListSectionProps {
-    networks: WiFiNetwork[];
-    previousNetwork: WiFiNetwork | null | undefined;
+interface WifiListProps {
+    networks: WifiNetwork[];
+    previousNetwork: WifiNetwork | null | undefined;
+    wifiConnected?: boolean;
+    currentSSID?: string;
 }
 
-export function NetworkListSection({
+export function WifiList({
     networks,
     previousNetwork,
-}: NetworkListSectionProps) {
-    const { config } = useWiFiConfig();
-    const { scanning, error, rescan } = useWiFiScan(config.currentSSID);
+    wifiConnected,
+    currentSSID,
+}: WifiListProps) {
+    const { config } = useWifiConfig();
+    const { scanning, error, rescan } = useWifiScan(config.currentSSID);
     const [expandedNetwork, setExpandedNetwork] = useState<string | null>(null);
 
-    const handleToggleExpand = (network: WiFiNetwork) => {
+    const handleToggleExpand = (network: WifiNetwork) => {
         if (expandedNetwork === network.ssid) {
             setExpandedNetwork(null);
         } else {
@@ -46,7 +48,14 @@ export function NetworkListSection({
                         onClick={rescan}
                         disabled={scanning}
                     >
-                        {scanning ? <ScanningSpinner /> : "Rescan"}
+                        {scanning ? (
+                            <div className="flex items-center gap-2">
+                                <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                                Scanning...
+                            </div>
+                        ) : (
+                            "Rescan"
+                        )}
                     </Button>
                 </div>
             </CardHeader>
@@ -64,7 +73,7 @@ export function NetworkListSection({
                 ) : (
                     <div className="space-y-2">
                         {networks.map((network) => (
-                            <NetworkItem
+                            <WifiItem
                                 key={network.ssid}
                                 network={network}
                                 isExpanded={expandedNetwork === network.ssid}
@@ -72,11 +81,22 @@ export function NetworkListSection({
                                     previousNetwork?.ssid === network.ssid
                                 }
                                 onToggleExpand={handleToggleExpand}
+                                wifiConnected={wifiConnected}
+                                currentSSID={currentSSID}
                             />
                         ))}
                     </div>
                 )}
             </CardContent>
         </Card>
+    );
+}
+
+function EmptyState() {
+    return (
+        <div className="text-center py-8 text-gray-500">
+            <Wifi className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+            <p>No WiFi networks found</p>
+        </div>
     );
 }

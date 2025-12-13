@@ -1,7 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { WiFiConnected } from "../components/captive-portal/WiFiConnected";
 import { Button } from "../components/ui/button";
-import { useWiFiConfig } from "../hooks/useWiFiConfig";
+import { WelcomePage } from "../components/welcome-page";
+import { WifiConnected } from "../components/wifi-connected";
+import { WifiUnconnected } from "../components/wifi-unconnected";
+import { useWifiConfig } from "../hooks/use-wifi-config";
 
 export const Route = createFileRoute("/")({
     component: Index,
@@ -9,7 +11,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
     const navigate = useNavigate();
-    const { config, loading, error } = useWiFiConfig();
+    const { config, loading, error } = useWifiConfig();
 
     if (loading) {
         return (
@@ -28,17 +30,27 @@ function Index() {
         );
     }
 
-    // Redirect to wifi-setting if not connected
-    if (!config.wifiConnected) {
-        navigate({ to: "/wifi-settings" });
-        return null;
+    // State 1: No network configured
+    if (!config.wifiConfigured) {
+        return <WelcomePage />;
     }
 
-    // Show connected screen
+    // State 2: Connected to network
+    if (config.wifiConnected) {
+        return (
+            <WifiConnected
+                ssid={config.currentSSID}
+                onDisconnect={() => navigate({ to: "/wifi-settings" })}
+            />
+        );
+    }
+
+    // State 3: Network configured but can't connect
     return (
-        <WiFiConnected
+        <WifiUnconnected
             ssid={config.currentSSID}
-            onDisconnect={() => navigate({ to: "/wifi-settings" })}
+            onRetry={() => navigate({ to: "/wifi-settings" })}
+            onSettings={() => navigate({ to: "/wifi-settings" })}
         />
     );
 }

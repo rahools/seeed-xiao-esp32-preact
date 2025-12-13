@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { CaptivePortal } from "../components/captive-portal/CaptivePortal";
 import { Button } from "../components/ui/button";
+import { WifiSettings } from "../components/wifi-settings";
 
 export const Route = createFileRoute("/wifi-settings")({
     component: WifiSettingComponent,
@@ -30,7 +30,7 @@ function WifiSettingComponent() {
                 </Button>
             </div>
 
-            <CaptivePortal onConnectionSuccess={handleConnectionSuccess} />
+            <WifiSettings onConnectionSuccess={handleConnectionSuccess} />
         </div>
     );
 }

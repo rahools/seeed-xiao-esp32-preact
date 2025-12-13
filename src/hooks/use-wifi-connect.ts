@@ -15,9 +15,13 @@ async function connectToWifi(connectionData: WifiConnectionData) {
     });
 
     if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: `HTTP error! status: ${response.status}` }));
+        const errorData = await response.json().catch(() => ({
+            message: `HTTP error! status: ${response.status}`,
+        }));
         console.error("Connection error response:", errorData);
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        throw new Error(
+            errorData.message || `HTTP error! status: ${response.status}`,
+        );
     }
 
     return response.json();
@@ -30,7 +34,7 @@ export function useWifiConnect() {
         mutationFn: connectToWifi,
         onSuccess: () => {
             // Optionally invalidate queries that should be updated after connection
-            queryClient.invalidateQueries({ queryKey: ['wifi-config'] });
+            queryClient.invalidateQueries({ queryKey: ["wifi-config"] });
         },
     });
 

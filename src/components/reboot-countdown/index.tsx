@@ -1,6 +1,6 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
+import { Progress } from "@ui/progress";
 import { useEffect, useState } from "preact/hooks";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Progress } from "../ui/progress";
 
 interface RebootCountdownProps {
     onComplete?: () => void;

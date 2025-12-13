@@ -1,17 +1,15 @@
-import { Link, useNavigate } from "@tanstack/react-router";
-import { CheckCircle, ExternalLink, Wifi } from "lucide-react";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Link } from "@tanstack/react-router";
+import { Badge } from "@ui/badge";
+import { Button } from "@ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
+import { CheckCircle, Wifi } from "lucide-react";
 
-interface WiFiConnectedProps {
+interface WifiConnectedProps {
     ssid?: string;
     onDisconnect?: () => void;
 }
 
-export function WiFiConnected({ ssid, onDisconnect }: WiFiConnectedProps) {
-    const navigate = useNavigate();
-
+export function WifiConnected({ ssid, onDisconnect }: WifiConnectedProps) {
     return (
         <div className="min-h-svh bg-gradient-to-br from-green-50 to-emerald-100 p-4">
             <div className="max-w-2xl mx-auto space-y-6">
@@ -65,9 +63,9 @@ export function WiFiConnected({ ssid, onDisconnect }: WiFiConnectedProps) {
                 </Card>
 
                 {/* Action Cards */}
-                <Card className="cursor-pointer hover:shadow-md transition-shadow max-w-md mx-auto">
-                    <CardContent className="p-6 text-center">
-                        <Link to="/wifi-settings" className="block">
+                <Link to="/wifi-settings">
+                    <Card className="cursor-pointer hover:shadow-md transition-shadow max-w-md mx-auto">
+                        <CardContent className="p-6 text-center">
                             <Wifi className="w-8 h-8 mx-auto mb-2 text-purple-600" />
                             <h3 className="font-semibold mb-1">
                                 Network Settings
@@ -75,9 +73,9 @@ export function WiFiConnected({ ssid, onDisconnect }: WiFiConnectedProps) {
                             <p className="text-sm text-gray-600">
                                 View or modify WiFi configuration
                             </p>
-                        </Link>
-                    </CardContent>
-                </Card>
+                        </CardContent>
+                    </Card>
+                </Link>
 
                 {/* Additional Options */}
                 <div className="text-center space-y-3">

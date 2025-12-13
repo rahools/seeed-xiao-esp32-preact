@@ -1,17 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 
-export interface WiFiNetwork {
+export interface WifiNetwork {
     ssid: string;
     rssi: number; // Signal strength in dBm
     encryption: string;
 }
 
-export interface WiFiScanResponse {
-    networks: WiFiNetwork[];
+export interface WifiScanResponse {
+    networks: WifiNetwork[];
 }
 
-export function useWiFiScan(previousSSID?: string) {
-    const { data, isLoading, error, refetch } = useQuery<WiFiScanResponse>({
+export function useWifiScan(previousSSID?: string) {
+    const { data, isLoading, error, refetch } = useQuery<WifiScanResponse>({
         queryKey: ["wifi-scan"],
         queryFn: async () => {
             const response = await fetch("/api/wifi");
@@ -41,7 +41,12 @@ export function useWiFiScan(previousSSID?: string) {
     return {
         networks: sortedNetworks,
         scanning: isLoading,
-        error: error instanceof Error ? error.message : error ? "Unknown error" : null,
+        error:
+            error instanceof Error
+                ? error.message
+                : error
+                  ? "Unknown error"
+                  : null,
         rescan: () => refetch(),
     };
 }
