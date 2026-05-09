@@ -7,6 +7,7 @@
 
 #include <Arduino.h>
 #include <AsyncTCP.h>
+#include <DNSServer.h>
 #include <WiFi.h>
 
 #include <ArduinoJson.h>
@@ -20,14 +21,16 @@
 #endif
 
 static AsyncWebServer server(80);
+static DNSServer dnsServer;
 static WiFiUtils wifiUtils;
 
 // WiFi status variables
 bool wifiConfigured = false;
 bool wifiConnected = false;
+bool dnsActive = true;
 String currentSSID = "";
 
-// Function to check WiFi status
+// Function to check WiFi status and manage DNS hijacking
 void updateWiFiStatus() {
   wifiConnected = WiFi.status() == WL_CONNECTED;
   if (wifiConnected) {
@@ -39,6 +42,18 @@ void updateWiFiStatus() {
     // For now, assume WiFi is not configured if not connected
     // This can be enhanced later to check stored credentials
     wifiConfigured = false;
+  }
+
+  // Manage DNS hijacking: active only when the device is in AP/setup mode
+  if (wifiConnected && dnsActive) {
+    dnsServer.stop();
+    dnsActive = false;
+    Serial.println("WiFi connected — DNS hijacking disabled");
+  }
+  else if (!wifiConnected && !dnsActive) {
+    dnsServer.start(53, "*", WiFi.softAPIP());
+    dnsActive = true;
+    Serial.println("WiFi disconnected — DNS hijacking re-enabled");
   }
 }
 
@@ -84,6 +99,10 @@ void setup() {
   // WiFi.mode(WIFI_AP); // Moved to WiFiUtils::begin() which sets WIFI_AP_STA
   WiFi.softAP("esp-captive");
 
+  // Start DNS server that redirects all DNS queries to the captive portal
+  // This triggers the "Sign in to Network" popup on modern devices (iOS, Android, Windows, macOS)
+  dnsServer.start(53, "*", WiFi.softAPIP());
+
   wifiUtils.begin();
 
   // start LittleFS
@@ -103,6 +122,53 @@ void setup() {
   // curl -v http://192.168.4.1/
   server.on(
       "/", HTTP_GET, [](AsyncWebServerRequest* request) { request->redirect("/index.html"); });
+
+  // Captive portal detection endpoints
+  // These are probed by modern OSes to detect if they're behind a captive portal:
+  //   - Apple (iOS/macOS): captive.apple.com/hotspot-detect.html
+  //   - Android: connectivitycheck.gstatic.com/generate_204
+  //   - Windows: www.msftconnecttest.com/connecttest.txt
+  server.on("/hotspot-detect.html", HTTP_GET, [](AsyncWebServerRequest* request) {
+    if (!wifiConnected) {
+      request->redirect("/");
+    }
+    else {
+      request->send(404, "text/plain", "Not Found");
+    }
+  });
+  server.on("/generate_204", HTTP_GET, [](AsyncWebServerRequest* request) {
+    if (!wifiConnected) {
+      request->redirect("/");
+    }
+    else {
+      request->send(404, "text/plain", "Not Found");
+    }
+  });
+  server.on("/connecttest.txt", HTTP_GET, [](AsyncWebServerRequest* request) {
+    if (!wifiConnected) {
+      request->redirect("/");
+    }
+    else {
+      request->send(404, "text/plain", "Not Found");
+    }
+  });
+  server.on("/ncsi.txt", HTTP_GET, [](AsyncWebServerRequest* request) {
+    if (!wifiConnected) {
+      request->redirect("/");
+    }
+    else {
+      request->send(404, "text/plain", "Not Found");
+    }
+  });
+
+  server.onNotFound([](AsyncWebServerRequest* request) {
+    if (!wifiConnected) {
+      request->redirect("http://" + WiFi.softAPIP().toString() + "/");
+    }
+    else {
+      request->send(404, "text/plain", "Not Found");
+    }
+  });
 
   // curl -v http://192.168.4.1/config
   server.on("/config", HTTP_GET, [](AsyncWebServerRequest* request) {
@@ -155,6 +221,9 @@ void setup() {
 }
 
 void loop() {
+  if (dnsActive) {
+    dnsServer.processNextRequest();
+  }
   wifiUtils.loop();
   updateWiFiStatus();
 
